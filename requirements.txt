@@ -2,5 +2,5 @@ beautifulsoup4
 spacy==3.6.0
 gunicorn
 django
-typing-extensions
+typing-extensions==4.6.0
 pydantic
