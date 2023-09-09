@@ -1,0 +1,8 @@
+build:
+  steps:
+    - name: Install Dependencies
+      script:
+        - pip install -r requirements.txt
+    - name: Download spaCy Model
+      script:
+        - python -m spacy download en_core_web_sm
