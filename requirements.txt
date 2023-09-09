@@ -3,3 +3,4 @@ spacy
 gunicorn
 django
 typing-extensions
+pydantic
