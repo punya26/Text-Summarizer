@@ -1,5 +1,5 @@
 beautifulsoup4
-spacy
+spacy==3.6.0
 gunicorn
 django
 typing-extensions
