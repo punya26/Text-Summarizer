@@ -1,3 +1,4 @@
 beautifulsoup4
 spacy
 gunicorn
+django
