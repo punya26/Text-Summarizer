@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Summarizer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .container {
+        display: flex;
+        justify-content: space-between;
+        width: 90%;
+        max-width: 1200px;
+      }
+
+      form {
+        width: 45%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .summary-container {
+        width: 45%;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #f2f2f2;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      .summary-container p {
+        line-height: 1.5;
+      }
+
+      #words-entered-label strong,
+      #words-summarized-label strong {
+        font-weight: bold;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      input[type="submit"] {
+        background-color: #3498db;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+      }
+
+      /* Responsive styles for phones */
+      @media screen and (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        form {
+          width: 100%;
+        }
+
+        .summary-container {
+          width: 100%;
+        }
+
+        textarea {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Text Summarizer</h1>
+    <div class="container">
+      <form method="POST">
+        {% csrf_token %}
+        <label for="input-type">Choose input type:</label><br />
+        <input
+          type="radio"
+          name="input-type"
+          value="text"
+          id="text-input"
+          checked
+        />
+        <label for="text-input">Text</label>
+        <input type="radio" name="input-type" value="url" id="url-input" />
+        <label for="url-input">URL</label><br /><br />
+        <label for="input">Enter Text or URL:</label><br />
+        <textarea name="input" rows="10" cols="50">{{ text }}</textarea
+        ><br /><br />
+        <div id="words-entered-label">
+          <strong>Number of words entered: 0</strong>
+        </div>
+        <input type="submit" value="Summarize" />
+      </form>
+      {% if summary %}
+      <div class="summary-container">
+        <h2>Summary:</h2>
+        <p>{{ summary }}</p>
+        <br />
+        <div id="words-summarized-label">
+          <strong>Words summarized to: 0</strong>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      // Function to count words in the textarea and update labels
+      function countWords() {
+        var inputType = document.querySelector(
+          'input[name="input-type"]:checked'
+        ).value;
+        var text = "";
+
+        if (inputType === "text") {
+          text = document.querySelector('textarea[name="input"]').value;
+        } else if (inputType === "url") {
+          // You can add code here to fetch the text content from a URL
+        }
+
+        var summary = document.querySelector(
+          ".summary-container p"
+        ).textContent;
+
+        // Count words in the entered text
+        var wordsEntered = text.split(/\s+/).filter(Boolean).length;
+
+        // Count words in the summary
+        var wordsSummarized = summary.split(/\s+/).filter(Boolean).length;
+
+        // Update labels
+        document.getElementById("words-entered-label").textContent =
+          "Number of words entered: " + wordsEntered;
+        document.getElementById("words-summarized-label").textContent =
+          "Words summarized to: " + wordsSummarized;
+      }
+
+      // Attach the countWords function to the textarea input event
+      document
+        .querySelector('textarea[name="input"]')
+        .addEventListener("input", countWords);
+
+      // Attach the countWords function to the input type change event
+      document
+        .querySelectorAll('input[name="input-type"]')
+        .forEach(function (radio) {
+          radio.addEventListener("change", countWords);
+        });
+
+      // Initially count words when the page loads
+      countWords();
+    </script>
+  </body>
+</html>
