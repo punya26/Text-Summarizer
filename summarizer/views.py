@@ -15,7 +15,7 @@ nlp = spacy.load('en_core_web_sm')
 # Define punctuation here, outside the summarize_text function
 punctuation = punctuation + '\n'
 
-def summarize_text(text):
+def summarize_text(text, summary_ratio=10):
     if text.startswith("http://") or text.startswith("https://"):
         # URL input, perform web scraping
         try:
@@ -70,8 +70,8 @@ def summarize_text(text):
                 else:
                     sentence_scores[sent] += word_frequencies[word.text.lower()]
 
-    # Calculate the target summary length based on the 1:10 ratio
-    target_summary_length = len(text.split()) // 10
+    # Calculate the target summary length based on the user's chosen ratio
+    target_summary_length = len(text.split()) / summary_ratio
 
     # Select sentences for the summary until the target length is reached
     summary = []
@@ -93,6 +93,7 @@ def index(request):
     if request.method == 'POST':
         input_type = request.POST.get('input-type', 'text')  # Get the input type (text or url)
         input_data = request.POST.get('input', '')
+        summary_ratio = float(request.POST.get('summary-ratio', 10))  # Get the user's chosen ratio (default: 10)
 
         if input_data:
             if input_type == 'url':
@@ -105,7 +106,7 @@ def index(request):
                 # Handle unsupported input types here
                 text = ''
 
-            summary = summarize_text(text)
-            return render(request, 'summarizer/index.html', {'text': input_data, 'summary': summary, 'input_type': input_type})
+            summary = summarize_text(text, summary_ratio)
+            return render(request, 'summarizer/index.html', {'text': input_data, 'summary': summary, 'input_type': input_type, 'summary_ratio': summary_ratio})
 
-    return render(request, 'summarizer/index.html', {'text': '', 'summary': '', 'input_type': 'text'})
+    return render(request, 'summarizer/index.html', {'text': '', 'summary': '', 'input_type': 'text', 'summary_ratio': 10})
