@@ -8,6 +8,8 @@ import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 from string import punctuation
 from heapq import nlargest
+import os
+from gtts import gTTS
 
 # Load the English language model
 nlp = spacy.load('en_core_web_sm')
@@ -89,6 +91,13 @@ def summarize_text(text, summary_ratio=10):
 
     return summary
 
+def generate_mp3(text, output_path):
+    """
+    Generate an MP3 audio file from the provided text using gTTS.
+    """
+    tts = gTTS(text)
+    tts.save(output_path)
+
 def index(request):
     if request.method == 'POST':
         input_type = request.POST.get('input-type', 'text')  # Get the input type (text or url)
@@ -107,6 +116,25 @@ def index(request):
                 text = ''
 
             summary = summarize_text(text, summary_ratio)
-            return render(request, 'summarizer/index.html', {'text': input_data, 'summary': summary, 'input_type': input_type, 'summary_ratio': summary_ratio})
+            mp3_filename = 'summary.mp3'
+            mp3_path = os.path.join('/Users/sidesshmore/Desktop/Projects/Text-Summariser/media', mp3_filename)
+            generate_mp3(summary, mp3_path)
 
-    return render(request, 'summarizer/index.html', {'text': '', 'summary': '', 'input_type': 'text', 'summary_ratio': 10})
+            # Provide the download link for the MP3 file
+            mp3_url = os.path.join('/media/', mp3_filename)
+
+            return render(request, 'summarizer/index.html', {
+                'text': input_data,
+                'summary': summary,
+                'input_type': input_type,
+                'summary_ratio': summary_ratio,
+                'mp3_url': mp3_url,  # Add this to pass the MP3 URL to the template
+            })
+        
+    return render(request, 'summarizer/index.html', {
+        'text': '',
+        'summary': '',
+        'input_type': 'text',
+        'summary_ratio': 10,
+        'mp3_url': None,  
+    })

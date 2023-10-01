@@ -115,7 +115,12 @@
             name="summary-ratio"
             value="10"
             step="0.25"
-            style="width: 50px; font-weight: bold; font-size: 16px; text-align: center"
+            style="
+              width: 50px;
+              font-weight: bold;
+              font-size: 16px;
+              text-align: center;
+            "
           />) </label
         ><br /><br />
         <label for="input">Enter Text or URL:</label><br />
@@ -134,6 +139,10 @@
         <div id="words-summarized-label">
           <strong>Words summarized to: 0</strong>
         </div>
+      </div>
+      {% endif %} {% if mp3_url %}
+      <div>
+        <a href="{{ mp3_url }}" download="summary.mp3">Download MP3</a>
       </div>
       {% endif %}
     </div>

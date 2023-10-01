@@ -4,3 +4,4 @@ gunicorn
 django
 typing_extensions==4.7.1
 pydantic==1.7.4
+gTTS
